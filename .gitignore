@@ -364,3 +364,4 @@ FodyWeavers.xsd
 *.jpg
 *.json
 /SuperShop/Properties/launchSettings.json
+/SuperShop/appsettings.json
