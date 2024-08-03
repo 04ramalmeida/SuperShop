@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -80,7 +82,7 @@ namespace SuperShop.Controllers
                 
                 var product = _converterHelper.ToProduct(model, imageId, true);
                 //TODO: Modificar para o user que tiver logado
-                product.User = await _userHelper.GetUserByEmailAsync("email@email.com");
+                product.User = await _userHelper.GetUserByEmailAsync("email@gmail.com");
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
 
@@ -91,6 +93,7 @@ namespace SuperShop.Controllers
 
 
         // GET: Products/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -131,7 +134,7 @@ namespace SuperShop.Controllers
                     }
 
                     var product = _converterHelper.ToProduct(model, imageId, true);
-                    product.User = await _userHelper.GetUserByEmailAsync("email@email.com");
+                    product.User = await _userHelper.GetUserByEmailAsync("email@gmail.com");
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
