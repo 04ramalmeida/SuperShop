@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SuperShop.Data;
-using SuperShop.Data.Entities;
 using SuperShop.Helpers;
-using SuperShop.Migrations;
 using SuperShop.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SuperShop.Controllers
 {
@@ -27,7 +21,7 @@ namespace SuperShop.Controllers
             IImageHelper imageHelper,
             IConverterHelper converterHelper)
         {
-           _productRepository = productRepository;
+            _productRepository = productRepository;
             _userHelper = userHelper;
             _imageHelper = imageHelper;
             _converterHelper = converterHelper;
@@ -74,16 +68,15 @@ namespace SuperShop.Controllers
             {
                 var path = string.Empty;
 
-                if (model.ImageFile != null && model.ImageFile.Length > 0 )
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
 
                     path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
                 }
 
-                
+
                 var product = _converterHelper.ToProduct(model, path, true);
-                //TODO: Modificar para o user que tiver logado
-                product.User = await _userHelper.GetUserByEmailAsync("email@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
 
@@ -107,7 +100,7 @@ namespace SuperShop.Controllers
             {
                 return NotFound();
             }
-            
+
             var model = _converterHelper.ToProductViewModel(product);
             return View(model);
         }
@@ -121,7 +114,7 @@ namespace SuperShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductViewModel model)
         {
-            
+
 
             if (ModelState.IsValid)
             {
@@ -140,7 +133,7 @@ namespace SuperShop.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _productRepository.ExistAsync(model.Id))
+                    if (!await _productRepository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -155,6 +148,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
