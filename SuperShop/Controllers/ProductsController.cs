@@ -34,17 +34,18 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var product = _productRepository.GetByIdAsync(id.Value);
-            if (product == null)
+            if (product.Result == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(product.Result);
@@ -173,6 +174,11 @@ namespace SuperShop.Controllers
             var product = await _productRepository.GetByIdAsync(id);
             await _productRepository.DeleteAsync(product);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ProductNotFound()
+        {
+            return View();
         }
     }
 }
