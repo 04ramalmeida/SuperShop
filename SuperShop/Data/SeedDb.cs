@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,22 @@ namespace SuperShop.Data
             await _userHelper.CheckRoleAsync("Admin");
             await _userHelper.CheckRoleAsync("Customer");
 
+            if (!_context.Countries.Any())
+            {
+                var cities = new List<City>();
+                cities.Add(new City { Name = "Lisboa" });
+                cities.Add(new City { Name = "Porto" });
+                cities.Add(new City { Name = "Faro" });
+                
+                _context.Countries.Add(new Country
+                {
+                    Cities = cities,
+                    Name = "Portugal"
+                });
+                
+                await _context.SaveChangesAsync();
+            }
+
             var user = await _userHelper.GetUserByEmailAsync("email@gmail.com");
 
             if (user == null) 
@@ -38,10 +55,13 @@ namespace SuperShop.Data
                     LastName = "Almeida",
                     Email = "email@gmail.com",
                     UserName = "email@gmail.com",
-                    PhoneNumber = "111111111"
+                    PhoneNumber = "111111111",
+                    Address = "Rua Jau 33",
+                    CityID = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
                 };
 
-                var result = await _userHelper.AddUserAsync(user, "8Cl6TTyrA");
+                var result = await _userHelper.AddUserAsync(user, "123456");
                 if (result != IdentityResult.Success)
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
