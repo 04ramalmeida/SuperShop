@@ -30,6 +30,11 @@ namespace SuperShop.Helpers
             await _userManager.AddToRoleAsync(user, roleName);
         }
 
+        public async Task<SignInResult> ValidatePasswordAsync(User user, string password)
+        {
+            return await _signInManager.CheckPasswordSignInAsync(user, password, false);
+        }
+
         public async Task<IdentityResult> ChangePasswordAsync(
             User user,
             string oldPassword,
