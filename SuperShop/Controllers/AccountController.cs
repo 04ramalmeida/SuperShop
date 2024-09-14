@@ -20,15 +20,18 @@ namespace SuperShop.Controllers
         private readonly IUserHelper _userHelper;
         private readonly ICountryRepository _countryRepository;
         private readonly IConfiguration _configuration;
+        private readonly IMailHelper _mailHelper;       
         
         public AccountController(
             IUserHelper userHelper,
             ICountryRepository countryRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IMailHelper mailHelper)
         {
             _userHelper = userHelper;
             _countryRepository = countryRepository;
             _configuration = configuration;
+            _mailHelper = mailHelper;
         }
 
         public IActionResult Login()
@@ -102,21 +105,22 @@ namespace SuperShop.Controllers
                     return View(model);
                 }
 
-                var loginViewModel = new LoginViewModel
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
                 {
-                    Password = model.Password,
-                    RememberMe = false,
-                    Username = model.Username
-                };
-
-                var result2 = await _userHelper.LoginAsync(loginViewModel);
-                if (result2.Succeeded)
+                    userId = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+                
+                Response response = _mailHelper.SendEmail(model.Username, "Email confirmation", "To confirm this user" + 
+                                                                            $"please click on this link:<br/><a href=\"{tokenLink}\">Confirm</a>");
+                if (response.IsSuccess)
                 {
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Message = "The instructions to allow you user has been sent to email";
+                    return View(model);
                 }
 
                 ModelState.AddModelError(string.Empty, "This user couldn't be logged.");
-                return View(model);
             }
             return View(model);
         }
@@ -264,6 +268,27 @@ namespace SuperShop.Controllers
             }
 
             return BadRequest();
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+            
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                
+            }
+            return View();
         }
         
     }
