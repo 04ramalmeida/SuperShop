@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using SuperShop.Data;
 using SuperShop.Data.Entities;
 using SuperShop.Models;
+using Vereyon.Web;
 
 namespace SuperShop.Controllers
 {
@@ -16,10 +17,12 @@ namespace SuperShop.Controllers
     public class CountriesController : Controller
     {
         private readonly ICountryRepository _countryRepository;
+        private readonly IFlashMessage _flashMessage;
         private readonly DataContext _context;
-        public CountriesController(ICountryRepository countryRepository, DataContext context)
+        public CountriesController(ICountryRepository countryRepository, IFlashMessage flashMessage, DataContext context)
         {
             _countryRepository = countryRepository;
+            _flashMessage = flashMessage;
         }
         public async Task<IActionResult> DeleteCity(int? id)
         {
@@ -131,8 +134,16 @@ namespace SuperShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                try
+                {
                     await _countryRepository.CreateAsync(country);
                     return RedirectToAction(nameof(Index));
+                }
+                catch (Exception) 
+                {
+                    _flashMessage.Danger("This country already exists.");
+                }
+                return View(country);
             }
 
             return View(country);

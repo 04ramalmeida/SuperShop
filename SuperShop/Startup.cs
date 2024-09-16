@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Vereyon.Web;
 
 namespace SuperShop
 {
@@ -63,6 +64,9 @@ namespace SuperShop
             { 
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddFlashMessage();
+
             services.AddTransient<SeedDb>();
             services.AddTransient<IUserHelper, UserHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
