@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SuperShop.Data.Entities;
+using System.Reflection.Emit;
 
 namespace SuperShop.Data
 {
@@ -20,6 +21,30 @@ namespace SuperShop.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) 
         { 
 
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            builder.Entity<Product>()
+               .Property(p => p.Price)
+               .HasColumnType("decimal(18,2)");
+
+
+            builder.Entity<OrderDetailTemp>()
+               .Property(p => p.Price)
+               .HasColumnType("decimal(18,2)");
+
+
+            builder.Entity<OrderDetail>()
+              .Property(p => p.Price)
+              .HasColumnType("decimal(18,2)");
+
+
+            base.OnModelCreating(builder);
         }
     }
 }
