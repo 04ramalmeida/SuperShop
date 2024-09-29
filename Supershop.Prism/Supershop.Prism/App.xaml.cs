@@ -3,6 +3,7 @@ using Prism.Ioc;
 using Supershop.Prism.Services;
 using Supershop.Prism.ViewModels;
 using Supershop.Prism.Views;
+using SuperShop.Prism.ViewModels;
 using Syncfusion.Licensing;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;

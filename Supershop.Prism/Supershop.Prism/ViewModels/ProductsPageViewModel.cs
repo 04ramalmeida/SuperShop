@@ -1,20 +1,23 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
+using Supershop.Prism;
 using Supershop.Prism.Models;
 using Supershop.Prism.Services;
+using Supershop.Prism.ViewModels;
+using SuperShop.Prism.Helpers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace Supershop.Prism.ViewModels
+namespace SuperShop.Prism.ViewModels
 {
     public class ProductsPageViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
         private ObservableCollection<ProductItemViewModel> _products;
-        private INavigationService _navigationService;
         private bool _isRunning;
         private string _search;
         private List<ProductResponse> _myProducts;
@@ -26,16 +29,17 @@ namespace Supershop.Prism.ViewModels
         {
             _navigationService = navigationService;
             _apiService = apiService;
-            Title = "Products Page";
+            Title = Languages.Products;
             LoadProductsAsync();
         }
+
 
         public DelegateCommand SearchCommand => _searchCommand ?? (_searchCommand = new DelegateCommand(ShowProducts));
 
         public string Search
         {
             get => _search;
-            set 
+            set
             {
                 SetProperty(ref _search, value);
                 ShowProducts();
@@ -54,16 +58,18 @@ namespace Supershop.Prism.ViewModels
             set => SetProperty(ref _products, value);
         }
 
+
         private async void LoadProductsAsync()
         {
-            
 
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    await App.Current.MainPage.DisplayAlert("Error", "Check the internet connection", "Accept");
-                });              
+                    await App.Current.MainPage.DisplayAlert(
+                        Languages.Error,
+                        Languages.ConnectionError, Languages.Accept);
+                });
                 return;
             }
 
@@ -77,9 +83,12 @@ namespace Supershop.Prism.ViewModels
 
             if (!response.IsSuccess)
             {
-                await App.Current.MainPage.DisplayAlert("Error", response.Message, "Accept");
+                await App.Current.MainPage.DisplayAlert(
+                    Languages.Error,
+                    response.Message,
+                    Languages.Accept);
                 return;
-            }   
+            }
 
             _myProducts = (List<ProductResponse>)response.Result;
             ShowProducts();
