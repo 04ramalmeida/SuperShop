@@ -9,75 +9,95 @@
              BackgroundColor="{StaticResource ColorBackground}"
              x:Class="Supershop.Prism.Views.ProductDetailPage"
              Title="{Binding Title}">
-    <AbsoluteLayout>
-        <StackLayout
-            Padding="5"
-            AbsoluteLayout.LayoutBounds="0,0,1,1"
-            AbsoluteLayout.LayoutFlags="All">
-            <SearchBar
-                Placeholder="{i18n:Translate SearchProduct}"
-                SearchCommand="{Binding SearchCommand}"
-                Text="{Binding Search}" />
-            <CollectionView ItemsSource="{Binding Products}">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SelectProductCommand}" />
-                            </Grid.GestureRecognizers>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ffimageloading:CachedImage
-                                Grid.Column="0"
-                                Margin="5"
-                                Aspect="AspectFill"
-                                CacheDuration="50"
-                                RetryCount="3"
-                                RetryDelay="600"
-                                Source="{Binding ImageFullPath}"
-                                WidthRequest="100" />
-                            <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="Medium"
-                                    LineBreakMode="TailTruncation"
-                                    Text="{Binding Name}" />
-                                <Label FontAttributes="Italic" VerticalOptions="End">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{i18n:Translate Price}" />
-                                            <Span Text="{Binding Price, StringFormat=': {0:C2}'}" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Label
-                                    FontAttributes="Italic"
-                                    Text="{Binding Stock, StringFormat='Stock: {0:N2}'}"
-                                    VerticalOptions="End" />
-                            </StackLayout>
-                            <Image Grid.Column="2" Source="ic_more_vert" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+    <ScrollView>
+        <StackLayout Padding="10">
+            <ffimageloading:CachedImage
+                Aspect="AspectFit"
+                CacheDuration="50"
+                RetryCount="3"
+                RetryDelay="600"
+                Source="{Binding Product.ImageFullPath}"
+                WidthRequest="200" />
+            <Grid Padding="10,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate Name}" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Text="{Binding Product.Name}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate Price}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="{Binding Product.Price, StringFormat='{0:C2}'}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate LastPurchase}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Text="{Binding Product.LastPurchase}" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate LastSale}" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Text="{Binding Product.LastSale}" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate IsAvailable}"
+                    VerticalOptions="Center" />
+                <CheckBox
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    HorizontalOptions="Start"
+                    IsChecked="{Binding Product.IsAvailable}"
+                    IsEnabled="False" />
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{i18n:Translate Stock}" />
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Text="{Binding Product.Stock, StringFormat='{0:N2}'}" />
+            </Grid>
+
+            <Button
+                BackgroundColor="Navy"
+                Command="{Binding AddToCartBinding}"
+                CornerRadius="10"
+                Text="{i18n:Translate AddToCart}"
+                TextColor="White"
+                VerticalOptions="EndAndExpand" />
         </StackLayout>
-        <busyindicator:SfBusyIndicator
-            Title="{i18n:Translate Loading}"
-            AbsoluteLayout.LayoutBounds=".5,.5,.5,.5"
-            AbsoluteLayout.LayoutFlags="All"
-            AnimationType="Gear"
-            BackgroundColor="{StaticResource ColorAccent}"
-            HorizontalOptions="Center"
-            IsBusy="{Binding IsRunning}"
-            TextColor="{StaticResource ColorFontInverse}"
-            VerticalOptions="Center"
-            ViewBoxHeight="80"
-            ViewBoxWidth="80" />
-    </AbsoluteLayout>
+    </ScrollView>
 </ContentPage>
