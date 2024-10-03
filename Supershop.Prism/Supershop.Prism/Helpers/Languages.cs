@@ -1,5 +1,6 @@
 ﻿using Supershop.Prism.Resources;
 using SuperShop.Prism.Interfaces;
+using SuperShop.Prism.Resources;
 using System.Globalization;
 using Xamarin.Forms;
 
@@ -44,5 +45,13 @@ namespace SuperShop.Prism.Helpers
         public static string LastPurchase => Resource.LastPurchase;
 
         public static string LastSale => Resource.LastSale;
+
+        public static string Login => Resource.Login;
+
+        public static string ModifyUser => Resource.ModifyUser;
+
+        public static string ShowPurchaseHistory => Resource.ShowPurchaseHistory;
+
+        public static string ShowShoppingCar => Resource.ShowShoppingCar;
     }
 }
